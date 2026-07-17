@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Solo Quiz Arena with Leaderboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="top-watermark">GameDev.Earl</div>
+
+    <!-- 1. STANDALONE AUTH CARD OVERLAY -->
+    <div id="auth-overlay-card" class="card">
+        <h2>Account Access</h2>
+        <p style="color: #aaa; margin-bottom: 15px;">Login or Sign Up to access the Arena</p>
+        <input type="email" id="auth-email" placeholder="Email Address">
+        <input type="password" id="auth-password" placeholder="Password (Min 6 chars)">
+        <div style="display: flex; gap: 10px;">
+            <button id="auth-login-btn">Log In</button>
+            <button id="auth-signup-btn" style="background: #28a745;">Sign Up</button>
+        </div>
+        <p id="auth-error-msg" style="color: #ff4757; font-size: 0.9rem; margin-top: 10px; display: none;"></p>
+    </div>
+
+    <!-- 2. ONE-TIME PROFILE SETUP OVERLAY (Locks 1 Name to the account) -->
+    <div id="profile-overlay-card" class="card hidden">
+        <h2>Set Your Nickname</h2>
+        <p style="color: #aaa; margin-bottom: 15px;">This name will be locked to your account and displayed on the leaderboard!</p>
+        <input type="text" id="profile-name-input" placeholder="Your Unique Nickname" maxlength="15">
+        <button id="save-profile-btn">Save & Continue</button>
+        <p id="profile-error-msg" style="color: #ff4757; font-size: 0.9rem; margin-top: 10px; display: none;"></p>
+    </div>
+
+    <!-- 3. ORIGINAL START SCREEN (Now cleanly displays their locked username) -->
+    <div id="start-screen" class="card hidden">
+        <h2>Quiz ta</h2>
+        <p style="color: #aaa; margin-bottom: 5px;">Logged in as:</p>
+        <h3 id="display-player-name" style="color: #0df; font-size: 1.6rem; margin-bottom: 20px;">Player</h3>
+        
+        <div style="display: flex; gap: 10px;">
+            <button id="start-btn">Start Quiz</button>
+            <button id="logout-btn" style="background: #e74c3c;">Log Out</button>
+        </div>
+
+        <div class="leaderboard-box">
+            <div class="leaderboard-title">🏆 Top Scores</div>
+            <ul id="start-leaderboard" class="leaderboard-list"></ul>
+        </div>
+    </div>
+
+    <!-- 4. ORIGINAL GAME SCREEN -->
+    <div id="game-screen" class="card hidden">
+        <h3 id="question-text">Question goes here...</h3>
+        <div id="choices-container"></div>
+        <p id="timer">Time Left: 10s</p>
+        <div id="score-board">Score: 0</div>
+    </div>
+
+    <!-- 5. ORIGINAL END SCREEN -->
+    <div id="end-screen" class="card hidden">
+        <h2>Quiz Complete!</h2>
+        <h3 id="final-score" style="color: #0df; font-size: 1.8rem; margin: 15px 0;">Score: 0</h3>
+        <button id="restart-btn">Play Again</button>
+
+        <div class="leaderboard-box">
+            <div class="leaderboard-title">🏆 Updated Leaderboard</div>
+            <ul id="end-leaderboard" class="leaderboard-list"></ul>
+        </div>
+    </div>
+
+    <!-- FIREBASE SDK DEPENDENCIES -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <!-- MAIN CONTROL SCRIPT -->
+    <script src="script.js"></script>
+</body>
+</html>

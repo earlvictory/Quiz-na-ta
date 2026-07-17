@@ -1,0 +1,147 @@
+.top-watermark {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: rgba(255, 255, 255, 0.2); 
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+body { 
+    font-family: system-ui, -apple-system, sans-serif; 
+    background: #121214; 
+    color: #fff; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+    margin: 0; 
+    padding: 16px;
+}
+
+.card { 
+    background: #1a1a1e; 
+    padding: 2.5rem 1.5rem; 
+    border-radius: 16px; 
+    width: 100%;
+    max-width: 450px; 
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5); 
+    text-align: center; 
+}
+
+h2, h3 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    line-height: 1.4;
+}
+
+input { 
+    width: 100%; 
+    padding: 16px; 
+    margin: 10px 0; 
+    border-radius: 8px; 
+    border: none; 
+    font-size: 1.1rem; 
+    font-weight: 600;
+    background: #2a2a30; 
+    color: #fff; 
+    text-align: center;
+}
+
+input:focus {
+    outline: 2px solid #6200ee;
+}
+
+button { 
+    width: 100%; 
+    padding: 16px; 
+    margin: 10px 0; 
+    border-radius: 8px; 
+    border: none; 
+    font-size: 1.1rem; 
+    font-weight: 600;
+    background: #6200ee; 
+    color: white; 
+    cursor: pointer; 
+    transition: background 0.1s ease, transform 0.1s ease;
+}
+
+button:active { 
+    background: #4a00b8; 
+    transform: scale(0.98);
+}
+
+.choice-btn { 
+    background: #2a2a30; 
+    text-align: left; 
+    margin: 12px 0; 
+    padding: 18px;
+    font-size: 1rem;
+}
+
+/* Color classes for feedback */
+.correct-answer {
+    background: #2ed573 !important;
+}
+
+.wrong-answer {
+    background: #ff4757 !important;
+}
+
+#timer {
+    font-size: 1.2rem;
+    color: #ffa502;
+    font-weight: bold;
+    margin: 15px 0 5px 0;
+}
+
+#score-board {
+    margin-top: 20px; 
+    font-weight: bold; 
+    color: #0df;
+    font-size: 1.2rem;
+}
+
+/* Leaderboard styling */
+.leaderboard-box {
+    margin-top: 25px;
+    padding: 15px;
+    background: #222227;
+    border-radius: 10px;
+    text-align: left;
+}
+.leaderboard-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #ffa502;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #333;
+    font-size: 0.95rem;
+}
+.leaderboard-item:last-child {
+    border-bottom: none;
+}
+
+/* STRICT VISIBILITY OVERRIDE (CRITICAL FOR POSITIONING) */
+.hidden { display: none !important; }
