@@ -81,7 +81,7 @@ const db = firebase.firestore();
 const clickSound = new Audio("");
 const correctSound = new Audio("correct.mp3");
 const wrongSound = new Audio("fahh.mp3");
-const gameOverSound = new Audio("gameover.wav");
+const gameOverSound = new Audio("");
 
 // Game State Variables
 let shuffledQuestions = []; 
@@ -164,6 +164,8 @@ function showLeaderboard(targetElement) {
 const auth = firebase.auth();
 
 const authOverlay = document.getElementById("auth-overlay-card");
+const authLoadingOverlay = document.getElementById("auth-loading-overlay"); 
+const logoutLoadingOverlay = document.getElementById("logout-loading-overlay"); 
 const profileOverlay = document.getElementById("profile-overlay-card");
 const authEmail = document.getElementById("auth-email");
 const authPassword = document.getElementById("auth-password");
@@ -177,10 +179,15 @@ const profileErrorMsg = document.getElementById("profile-error-msg");
 const displayPlayerName = document.getElementById("display-player-name");
 
 function evaluateSessionState(user) {
+    // Hide active loaders when processing session updates
+    authLoadingOverlay.classList.add("hidden");
+    authLoadingOverlay.setAttribute("aria-hidden", "true");
+    logoutLoadingOverlay.classList.add("hidden");
+    logoutLoadingOverlay.setAttribute("aria-hidden", "true");
+
     if (user) {
         authOverlay.classList.add("hidden");
         
-        // Check if the user has already chosen a username profile update
         if (user.displayName) {
             profileOverlay.classList.add("hidden");
             startScreen.classList.remove("hidden");
@@ -188,12 +195,10 @@ function evaluateSessionState(user) {
             displayPlayerName.innerText = playerName;
             showLeaderboard(startLeaderboard);
         } else {
-            // New user missing a display name setup -> Trigger the profile form
             startScreen.classList.add("hidden");
             profileOverlay.classList.remove("hidden");
         }
     } else {
-        // Logged out clear-downs
         startScreen.classList.add("hidden");
         profileOverlay.classList.add("hidden");
         gameScreen.classList.add("hidden");
@@ -205,7 +210,7 @@ function evaluateSessionState(user) {
     }
 }
 
-// Log In Action
+// Log In Action (With 1.5s Delay Animation)
 authLoginBtn.addEventListener("click", () => {
     const email = authEmail.value.trim();
     const password = authPassword.value;
@@ -216,14 +221,22 @@ authLoginBtn.addEventListener("click", () => {
         return;
     }
 
-    auth.signInWithEmailAndPassword(email, password)
-        .catch(err => {
-            authErrorMsg.innerText = err.message;
-            authErrorMsg.style.display = "block";
-        });
+    authLoadingOverlay.classList.remove("hidden");
+    authLoadingOverlay.setAttribute("aria-hidden", "false");
+    authErrorMsg.style.display = "none";
+
+    setTimeout(() => {
+        auth.signInWithEmailAndPassword(email, password)
+            .catch(err => {
+                authLoadingOverlay.classList.add("hidden");
+                authLoadingOverlay.setAttribute("aria-hidden", "true");
+                authErrorMsg.innerText = err.message;
+                authErrorMsg.style.display = "block";
+            });
+    }, 1500);
 });
 
-// Sign Up Action
+// Sign Up Action (With 1.5s Delay Animation)
 authSignupBtn.addEventListener("click", () => {
     const email = authEmail.value.trim();
     const password = authPassword.value;
@@ -234,11 +247,19 @@ authSignupBtn.addEventListener("click", () => {
         return;
     }
 
-    auth.createUserWithEmailAndPassword(email, password)
-        .catch(err => {
-            authErrorMsg.innerText = err.message;
-            authErrorMsg.style.display = "block";
-        });
+    authLoadingOverlay.classList.remove("hidden");
+    authLoadingOverlay.setAttribute("aria-hidden", "false");
+    authErrorMsg.style.display = "none";
+
+    setTimeout(() => {
+        auth.createUserWithEmailAndPassword(email, password)
+            .catch(err => {
+                authLoadingOverlay.classList.add("hidden");
+                authLoadingOverlay.setAttribute("aria-hidden", "true");
+                authErrorMsg.innerText = err.message;
+                authErrorMsg.style.display = "block";
+            });
+    }, 1500);
 });
 
 // Save Locked Nickname Profile Action
@@ -252,10 +273,9 @@ saveProfileBtn.addEventListener("click", () => {
         return;
     }
 
-    // Update Firebase account with their chosen permanent profile name
     user.updateProfile({ displayName: chosenName })
         .then(() => {
-            evaluateSessionState(user); // Refresh page layout view
+            evaluateSessionState(user); 
         })
         .catch(err => {
             profileErrorMsg.innerText = err.message;
@@ -263,9 +283,19 @@ saveProfileBtn.addEventListener("click", () => {
         });
 });
 
-// Global Log Out Action
+// Global Log Out Action (With 1.5s Delay Animation)
 logoutBtn.addEventListener("click", () => {
-    auth.signOut().catch(err => console.error("Sign out error:", err));
+    logoutLoadingOverlay.classList.remove("hidden");
+    logoutLoadingOverlay.setAttribute("aria-hidden", "false");
+
+    setTimeout(() => {
+        auth.signOut()
+            .catch(err => {
+                logoutLoadingOverlay.classList.add("hidden");
+                logoutLoadingOverlay.setAttribute("aria-hidden", "true");
+                console.error("Sign out error:", err);
+            });
+    }, 1500);
 });
 
 // Sync tracking context state automatically
