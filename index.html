@@ -7,106 +7,142 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="top-watermark">GameDev.Earl</div>
 
-    <!-- 1. STANDALONE AUTH CARD OVERLAY -->
-    <div id="auth-overlay-card" class="card">
-        <h2>Account Access</h2>
-        <p style="color: #aaa; margin-bottom: 15px;">Login or Sign Up </p>
-        <input type="email" id="auth-email" placeholder="Email Address">
-        <input type="password" id="auth-password" placeholder="Password (Min 6 chars)">
-        <div style="display: flex; gap: 10px;">
-            <button id="auth-login-btn">Log In</button>
-            <button id="auth-signup-btn" style="background: #28a745;">Sign Up</button>
-        </div>
-        <p id="auth-error-msg" style="color: #ff4757; font-size: 0.9rem; margin-top: 10px; display: none;"></p>
-    </div>
+    <!-- HEADER / WATERMARK -->
+    <header class="top-watermark">GameDev.Earl</header>
 
-    <!-- 2. ONE-TIME PROFILE SETUP OVERLAY (Locks 1 Name to the account) -->
-    <div id="profile-overlay-card" class="card hidden">
-        <h2>Set Your Nickname</h2>
-        <p style="color: #aaa; margin-bottom: 15px;">This name will be locked to your account and displayed on the leaderboard!</p>
-        <input type="text" id="profile-name-input" placeholder="Your Unique Nickname" maxlength="15">
-        <button id="save-profile-btn">Save & Continue</button>
-        <p id="profile-error-msg" style="color: #ff4757; font-size: 0.9rem; margin-top: 10px; display: none;"></p>
-    </div>
+    <!-- MAIN APP CONTENT CONTAINERS -->
+    <main>
+        <!-- 1. STANDALONE AUTH CARD OVERLAY -->
+        <article id="auth-overlay-card" class="card" style="position: relative;">
+            <!-- Loading Spinner Overlay -->
+            <div id="auth-loading-overlay" class="loading-overlay hidden" aria-live="polite" aria-hidden="true">
+                <div class="spinner"></div>
+                <p style="color: #0df; font-weight: bold; font-family: sans-serif; letter-spacing: 1px;">Logging in...</p>
+            </div>
 
-    <!-- 3. ORIGINAL START SCREEN (Now cleanly displays their locked username) -->
-    <div id="start-screen" class="card hidden">
-        <h2>Quiz ta</h2>
-        <p style="color: #aaa; margin-bottom: 5px;">Logged in as:</p>
-        <h3 id="display-player-name" style="color: #0df; font-size: 1.6rem; margin-bottom: 20px;">Player</h3>
+            <header>
+                <h2>Account Access</h2>
+                <p style="color: #aaa; margin-bottom: 15px;">Login or Sign Up </p>
+            </header>
+            <form id="auth-form" onsubmit="event.preventDefault();">
+                <input type="email" id="auth-email" placeholder="Email Address" required>
+                <input type="password" id="auth-password" placeholder="Password" minlength="6" required>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" id="auth-login-btn">Log In</button>
+                    <button type="button" id="auth-signup-btn" style="background: #28a745;">Sign Up</button>
+                </div>
+            </form>
+            <p id="auth-error-msg" style="color: #ff4757; font-size: 0.9rem; margin-top: 10px; display: none;" aria-live="assertive">The email or password you entered is wrong.</p>
+        </article>
+
+        <!-- ONE-TIME PROFILE SETUP OVERLAY - Locks 1 Name to the account -->
+        <article id="profile-overlay-card" class="card hidden">
+            <header>
+                <h2>Set Your Nickname</h2>
+                <p style="color: #aaa; margin-bottom: 15px;">This name will be locked to your account and displayed on the leaderboard!</p>
+            </header>
+            <form id="profile-form" onsubmit="event.preventDefault();">
+                <input type="text" id="profile-name-input" placeholder="Your Unique Nickname" maxlength="15" required>
+                <button type="submit" id="save-profile-btn">Save & Continue</button>
+            </form>
+            <p id="profile-error-msg" style="color: #ff4757; font-size: 0.9rem; margin-top: 10px; display: none;" aria-live="assertive"></p>
+        </article>
+
+        <!-- ORIGINAL START SCREEN - locked username) -->
+        <section id="start-screen" class="card hidden" aria-labelledby="start-title" style="position: relative;">
+            <!-- Log Out Loading Spinner Overlay -->
+            <div id="logout-loading-overlay" class="loading-overlay hidden" aria-live="polite" aria-hidden="true">
+                <div class="spinner"></div>
+                <p style="color: #0df; font-weight: bold; font-family: sans-serif; letter-spacing: 1px;">Logging out...</p>
+            </div>
+
+            <h2 id="start-title">Quiz ta</h2>
+            <p style="color: #aaa; margin-bottom: 5px;">Logged in as:</p>
+            <h3 id="display-player-name" style="color: #0df; font-size: 1.6rem; margin-bottom: 20px;">Player</h3>
+            
+            <div style="display: flex; gap: 10px;">
+                <button id="start-btn">Start Quiz</button>
+                <button id="logout-btn" style="background: #e74c3c;">Log Out</button>
+            </div>
+
+            <!-- LEADERBOARD COMPONENT -->
+            <section class="leaderboard-box" aria-label="Top Scores Leaderboard">
+                <h3 class="leaderboard-title">🏆 Top Scores</h3>
+                <ol id="start-leaderboard" class="leaderboard-list"></ol>
+            </section>
+        </section>
         
-        <div style="display: flex; gap: 10px;">
-            <button id="start-btn">Start Quiz</button>
-            <button id="logout-btn" style="background: #e74c3c;">Log Out</button>
-        </div>
+        <!-- ORIGINAL GAME SCREEN -->
+        <section id="game-screen" class="card hidden" aria-labelledby="question-text">
+            <h3 id="question-text">Question goes here...</h3>
+            
+            <!-- Quiz Choices Container -->
+            <div id="choices-container" role="group" aria-label="Quiz Choices"></div>
+            
+            <footer>
+                <p id="timer" aria-live="polite">Time Left: 10s</p>
+                <div id="score-board" aria-live="polite">Score: 0</div>
+            </footer>
+        </section>
 
-        <div class="leaderboard-box">
-            <div class="leaderboard-title">🏆 Top Scores</div>
-            <ul id="start-leaderboard" class="leaderboard-list"></ul>
-        </div>
-    </div>
+        <!-- ORIGINAL END SCREEN -->
+        <section id="end-screen" class="card hidden" aria-labelledby="end-title">
+            <h2 id="end-title">Quiz Complete!</h2>
+            <h3 id="final-score" style="color: #0df; font-size: 1.8rem; margin: 15px 0;" aria-live="polite">Score: 0</h3>
+            <button id="restart-btn">Play Again</button>
 
-    <!-- 4. ORIGINAL GAME SCREEN -->
-    <div id="game-screen" class="card hidden">
-        <h3 id="question-text">Question goes here...</h3>
-        <div id="choices-container"></div>
-        <p id="timer">Time Left: 10s</p>
-        <div id="score-board">Score: 0</div>
-    </div>
+            <!-- LEADERBOARD COMPONENT -->
+            <section class="leaderboard-box" aria-label="Updated Leaderboard">
+                <h3 class="leaderboard-title">🏆 Updated Leaderboard</h3>
+                <ol id="end-leaderboard" class="leaderboard-list"></ol>
+            </section>
+        </section>
+    </main>
+    
 
-    <!-- 5. ORIGINAL END SCREEN -->
-    <div id="end-screen" class="card hidden">
-        <h2>Quiz Complete!</h2>
-        <h3 id="final-score" style="color: #0df; font-size: 1.8rem; margin: 15px 0;">Score: 0</h3>
-        <button id="restart-btn">Play Again</button>
-
-        <div class="leaderboard-box">
-            <div class="leaderboard-title">🏆 Updated Leaderboard</div>
-            <ul id="end-leaderboard" class="leaderboard-list"></ul>
-        </div>
-    </div>
-
-    <!-- FIREBASE SDK DEPENDENCIES -->
+    <!-- FIREBASE SDK  -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
 
     <!-- MAIN CONTROL SCRIPT -->
     <script src="script.js"></script>
+    
+    <!-- SYSTEM PROTECTIONS -->
     <script>
-    // 1. Disable Right-Click
-    document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-    });
+        // Disable Right-Click
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
 
-    // 2. Disable DevTools and View-Source Shortcuts
-    document.addEventListener('keydown', function(e) {
-        // Prevent F12
-        if (e.key === 'F12') {
-            e.preventDefault();
-        }
-        // Prevent Ctrl+Shift+I / Cmd+Opt+I (Inspect)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
-            e.preventDefault();
-        }
-        // Prevent Ctrl+Shift+J / Cmd+Opt+J (Console)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j')) {
-            e.preventDefault();
-        }
-        // Prevent Ctrl+U / Cmd+Opt+U (View Source)
-        if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u')) {
-            e.preventDefault();
-        }
-    });
+        // Disable DevTools and View-Source Shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Prevent F12
+            if (e.key === 'F12') {
+                e.preventDefault();
+            }
+            // Prevent Ctrl+Shift+I / Cmd+Opt+I
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
+                e.preventDefault();
+            }
+            // Prevent Ctrl+Shift+J / Cmd+Opt+J 
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j')) {
+                e.preventDefault();
+            }
+            // Prevent Ctrl+U / Cmd+Opt+U
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
 
-    // 3. The Debugger Loop (Ruins DevTools functionality if opened)
-    (function() {
-        setInterval(function() {
-            debugger;
-        }, 100);
-    })();
-</script>
+        // Debugger Loop
+        (function() {
+            setInterval(function() {
+                debugger;
+            }, 100);
+        })();
+    </script>
 </body>
 </html>
