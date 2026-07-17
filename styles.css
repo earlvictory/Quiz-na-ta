@@ -145,3 +145,43 @@ button:active {
 
 /* STRICT VISIBILITY OVERRIDE (CRITICAL FOR POSITIONING) */
 .hidden { display: none !important; }
+/* Loading Overlay Container */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 15, 25, 0.85); /* Matches dark theme */
+    backdrop-filter: blur(4px); /* Modern blur effect */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: inherit;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+/* The Spinning Wheel */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 221, 255, 0.1); /* Light glow trace */
+    border-top: 4px solid #0df; /* Electric blue primary color */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 12px;
+}
+
+/* CSS Animation Rotation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Utility classes to toggle visibility smoothly */
+.hidden {
+    display: none !important;
+    opacity: 0;
+}
