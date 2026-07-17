@@ -75,5 +75,38 @@
 
     <!-- MAIN CONTROL SCRIPT -->
     <script src="script.js"></script>
+    <script>
+    // 1. Disable Right-Click
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // 2. Disable DevTools and View-Source Shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Prevent F12
+        if (e.key === 'F12') {
+            e.preventDefault();
+        }
+        // Prevent Ctrl+Shift+I / Cmd+Opt+I (Inspect)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
+            e.preventDefault();
+        }
+        // Prevent Ctrl+Shift+J / Cmd+Opt+J (Console)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j')) {
+            e.preventDefault();
+        }
+        // Prevent Ctrl+U / Cmd+Opt+U (View Source)
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u')) {
+            e.preventDefault();
+        }
+    });
+
+    // 3. The Debugger Loop (Ruins DevTools functionality if opened)
+    (function() {
+        setInterval(function() {
+            debugger;
+        }, 100);
+    })();
+</script>
 </body>
 </html>
