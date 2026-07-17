@@ -23,7 +23,7 @@
 
             <header>
                 <h2>Account Access</h2>
-                <p style="color: #aaa; margin-bottom: 15px;">Login or Sign Up </p>
+                <p style="color: #aaa; margin-bottom: 15px;">Login or Sign Up</p>
             </header>
             <form id="auth-form" onsubmit="event.preventDefault();">
                 <input type="email" id="auth-email" placeholder="Email Address" required>
@@ -36,7 +36,7 @@
             <p id="auth-error-msg" style="color: #ff4757; font-size: 0.9rem; margin-top: 10px; display: none;" aria-live="assertive">The email or password you entered is wrong.</p>
         </article>
 
-        <!-- ONE-TIME PROFILE SETUP OVERLAY - Locks 1 Name to the account -->
+        <!-- 2. ONE-TIME PROFILE SETUP OVERLAY -->
         <article id="profile-overlay-card" class="card hidden">
             <header>
                 <h2>Set Your Nickname</h2>
@@ -49,7 +49,7 @@
             <p id="profile-error-msg" style="color: #ff4757; font-size: 0.9rem; margin-top: 10px; display: none;" aria-live="assertive"></p>
         </article>
 
-        <!-- ORIGINAL START SCREEN - locked username) -->
+        <!-- 3. ORIGINAL START SCREEN -->
         <section id="start-screen" class="card hidden" aria-labelledby="start-title" style="position: relative;">
             <!-- Log Out Loading Spinner Overlay -->
             <div id="logout-loading-overlay" class="loading-overlay hidden" aria-live="polite" aria-hidden="true">
@@ -61,19 +61,26 @@
             <p style="color: #aaa; margin-bottom: 5px;">Logged in as:</p>
             <h3 id="display-player-name" style="color: #0df; font-size: 1.6rem; margin-bottom: 20px;">Player</h3>
             
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
                 <button id="start-btn">Start Quiz</button>
+                <button id="view-leaderboard-btn" style="background: #34db;">🏆 View Leaderboard</button>
                 <button id="logout-btn" style="background: #e74c3c;">Log Out</button>
             </div>
-
-            <!-- LEADERBOARD COMPONENT -->
-            <section class="leaderboard-box" aria-label="Top Scores Leaderboard">
-                <h3 class="leaderboard-title">🏆 Top Scores</h3>
-                <ol id="start-leaderboard" class="leaderboard-list"></ol>
-            </section>
         </section>
         
-        <!-- ORIGINAL GAME SCREEN -->
+        <!-- 4. DEDICATED LEADERBOARD SCREEN -->
+        <section id="leaderboard-screen" class="card hidden" aria-labelledby="leaderboard-screen-title">
+            <h2 id="leaderboard-screen-title">🏆 Global Rankings</h2>
+            <p style="color: #aaa; margin-bottom: 20px;">Top players scores</p>
+
+            <section class="leaderboard-box" aria-label="Top Scores Leaderboard">
+                <ol id="start-leaderboard" class="leaderboard-list"></ol>
+            </section>
+
+            <button id="back-to-menu-btn" style="margin-top: 15px; background: #7f8c8d;">Back to Menu</button>
+        </section>
+        
+        <!-- 5. ORIGINAL GAME SCREEN -->
         <section id="game-screen" class="card hidden" aria-labelledby="question-text">
             <h3 id="question-text">Question goes here...</h3>
             
@@ -86,13 +93,17 @@
             </footer>
         </section>
 
-        <!-- ORIGINAL END SCREEN -->
+        <!-- 6. ORIGINAL END SCREEN -->
         <section id="end-screen" class="card hidden" aria-labelledby="end-title">
             <h2 id="end-title">Quiz Complete!</h2>
             <h3 id="final-score" style="color: #0df; font-size: 1.8rem; margin: 15px 0;" aria-live="polite">Score: 0</h3>
-            <button id="restart-btn">Play Again</button>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button id="restart-btn">Play Again</button>
+                <button id="end-view-leaderboard-btn" style="background: #3498db;">🏆 Leaderboard</button>
+            </div>
 
-            <!-- LEADERBOARD COMPONENT -->
+            <!-- END LEADERBOARD BOX -->
             <section class="leaderboard-box" aria-label="Updated Leaderboard">
                 <h3 class="leaderboard-title">🏆 Updated Leaderboard</h3>
                 <ol id="end-leaderboard" class="leaderboard-list"></ol>
@@ -100,44 +111,27 @@
         </section>
     </main>
     
-
-    <!-- FIREBASE SDK  -->
+    <!-- FIREBASE SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
 
     <!-- MAIN CONTROL SCRIPT -->
     <script src="script.js"></script>
     
     <!-- SYSTEM PROTECTIONS -->
     <script>
-        // Disable Right-Click
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
         });
 
-        // Disable DevTools and View-Source Shortcuts
         document.addEventListener('keydown', function(e) {
-            // Prevent F12
-            if (e.key === 'F12') {
-                e.preventDefault();
-            }
-            // Prevent Ctrl+Shift+I / Cmd+Opt+I
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
-                e.preventDefault();
-            }
-            // Prevent Ctrl+Shift+J / Cmd+Opt+J 
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j')) {
-                e.preventDefault();
-            }
-            // Prevent Ctrl+U / Cmd+Opt+U
-            if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u')) {
-                e.preventDefault();
-            }
+            if (e.key === 'F12') e.preventDefault();
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i')) e.preventDefault();
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j')) e.preventDefault();
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u')) e.preventDefault();
         });
 
-        // Debugger Loop
         (function() {
             setInterval(function() {
                 debugger;
