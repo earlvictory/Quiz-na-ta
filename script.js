@@ -93,11 +93,17 @@ let playerName = "Anonymous";
 
 // Elements
 const startScreen = document.getElementById("start-screen");
+const leaderboardScreen = document.getElementById("leaderboard-screen");
 const gameScreen = document.getElementById("game-screen");
 const endScreen = document.getElementById("end-screen");
+
 const startBtn = document.getElementById("start-btn");
+const viewLeaderboardBtn = document.getElementById("view-leaderboard-btn");
+const backToMenuBtn = document.getElementById("back-to-menu-btn");
+const endViewLeaderboardBtn = document.getElementById("end-view-leaderboard-btn");
 const restartBtn = document.getElementById("restart-btn");
 const logoutBtn = document.getElementById("logout-btn"); 
+
 const questionText = document.getElementById("question-text");
 const choicesContainer = document.getElementById("choices-container");
 const timerText = document.getElementById("timer");
@@ -179,7 +185,7 @@ const profileErrorMsg = document.getElementById("profile-error-msg");
 const displayPlayerName = document.getElementById("display-player-name");
 
 function evaluateSessionState(user) {
-    // Hide active loaders when processing session updates
+    // Force reset all loading overlays
     authLoadingOverlay.classList.add("hidden");
     authLoadingOverlay.setAttribute("aria-hidden", "true");
     logoutLoadingOverlay.classList.add("hidden");
@@ -190,27 +196,36 @@ function evaluateSessionState(user) {
         
         if (user.displayName) {
             profileOverlay.classList.add("hidden");
+            leaderboardScreen.classList.add("hidden");
+            gameScreen.classList.add("hidden");
+            endScreen.classList.add("hidden");
             startScreen.classList.remove("hidden");
+            
             playerName = user.displayName;
             displayPlayerName.innerText = playerName;
-            showLeaderboard(startLeaderboard);
         } else {
             startScreen.classList.add("hidden");
+            leaderboardScreen.classList.add("hidden");
+            gameScreen.classList.add("hidden");
+            endScreen.classList.add("hidden");
             profileOverlay.classList.remove("hidden");
         }
     } else {
+        // Enforce full view cleanups on sign-out state
         startScreen.classList.add("hidden");
         profileOverlay.classList.add("hidden");
+        leaderboardScreen.classList.add("hidden");
         gameScreen.classList.add("hidden");
         endScreen.classList.add("hidden");
         authOverlay.classList.remove("hidden");
+        
         authEmail.value = "";
         authPassword.value = "";
         profileNameInput.value = "";
     }
 }
 
-// Log In Action (With 1.5s Delay Animation)
+// Log In Action (With 1.5s Delay Animation & Simplified Errors)
 authLoginBtn.addEventListener("click", () => {
     const email = authEmail.value.trim();
     const password = authPassword.value;
@@ -230,7 +245,12 @@ authLoginBtn.addEventListener("click", () => {
             .catch(err => {
                 authLoadingOverlay.classList.add("hidden");
                 authLoadingOverlay.setAttribute("aria-hidden", "true");
-                authErrorMsg.innerText = err.message;
+                
+                if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
+                    authErrorMsg.innerText = "The email or password you entered is wrong.";
+                } else {
+                    authErrorMsg.innerText = err.message;
+                }
                 authErrorMsg.style.display = "block";
             });
     }, 1500);
@@ -303,6 +323,30 @@ auth.onAuthStateChanged((user) => evaluateSessionState(user));
 // =========================================================================
 
 
+// Navigation Flow for Separated Leaderboard Screen
+viewLeaderboardBtn.addEventListener("click", () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
+    startScreen.classList.add("hidden");
+    leaderboardScreen.classList.remove("hidden");
+    showLeaderboard(startLeaderboard);
+});
+
+backToMenuBtn.addEventListener("click", () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
+    leaderboardScreen.classList.add("hidden");
+    startScreen.classList.remove("hidden");
+});
+
+endViewLeaderboardBtn.addEventListener("click", () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
+    endScreen.classList.add("hidden");
+    leaderboardScreen.classList.remove("hidden");
+    showLeaderboard(startLeaderboard);
+});
+
 // Start Game Event
 startBtn.addEventListener("click", () => {
     startGame();
@@ -332,6 +376,7 @@ function startGame() {
 
     startScreen.classList.add("hidden");
     endScreen.classList.add("hidden");
+    leaderboardScreen.classList.add("hidden");
     gameScreen.classList.remove("hidden");
 
     loadQuestion();
@@ -419,6 +464,7 @@ function revealCorrectAnswer(correctAnswer) {
     }, 1500);
 }
 
+// End Game
 function endGame() {
     clearInterval(timerInterval);
     gameOverSound.play();
