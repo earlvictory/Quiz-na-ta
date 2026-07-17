@@ -78,10 +78,10 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 // Audio Effects
-const clickSound = new Audio("https://assets.mixkit.co/active_storage/sfx/2568/2568-84.wav");
-const correctSound = new Audio("audio/correct.mp3");
-const wrongSound = new Audio("audio/fahh.mp3");
-const gameOverSound = new Audio("audio/gameover.wav");
+const clickSound = new Audio("");
+const correctSound = new Audio("correct.mp3");
+const wrongSound = new Audio("fahh.mp3");
+const gameOverSound = new Audio("gameover.wav");
 
 // Game State Variables
 let shuffledQuestions = []; 
